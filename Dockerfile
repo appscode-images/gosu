@@ -1,4 +1,4 @@
-FROM golang:1.24.6-trixie
+FROM golang:1.24.7-bookworm
 
 RUN set -eux; \
 	apt-get install --update -y --no-install-recommends \
