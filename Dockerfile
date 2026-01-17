@@ -1,12 +1,11 @@
 FROM golang:1.24.7-bookworm
 
 RUN set -eux; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
+	apt-get install --update -y --no-install-recommends \
 		arch-test \
 		file \
 	; \
-	rm -rf /var/lib/apt/lists/*
+	apt-get dist-clean
 
 # https://github.com/tianon/fake-git
 # https://github.com/tianon/fake-git/commits/HEAD
@@ -70,5 +69,6 @@ RUN ARCH=mips64el GOARCH=mips64le    gosu-build-and-test.sh
 RUN ARCH=ppc64el  GOARCH=ppc64le     gosu-build-and-test.sh
 RUN ARCH=riscv64  GOARCH=riscv64     gosu-build-and-test.sh
 RUN ARCH=s390x    GOARCH=s390x       gosu-build-and-test.sh
+RUN ARCH=loong64  GOARCH=loong64     gosu-build-and-test.sh
 
 RUN set -eux; go version -m /go/bin/gosu-*; ls -lAFh /go/bin/gosu-*; file /go/bin/gosu-*

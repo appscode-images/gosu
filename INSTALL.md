@@ -17,7 +17,7 @@ RUN set -eux; \
 Newer `gosu` releases:
 
 ```dockerfile
-ENV GOSU_VERSION 1.18
+ENV GOSU_VERSION 1.19
 RUN set -eux; \
 # save list of currently installed packages for later so we can clean up
 	savedAptMark="$(apt-mark showmanual)"; \
@@ -51,7 +51,7 @@ Note: on Debian versions older than Trixie, you'll need to swap `apt-get dist-cl
 ## `FROM alpine` (3.7+)
 
 ```dockerfile
-ENV GOSU_VERSION 1.18
+ENV GOSU_VERSION 1.19
 RUN set -eux; \
 	\
 	apk add --no-cache --virtual .gosu-deps \
@@ -83,7 +83,7 @@ RUN set -eux; \
 ## `FROM centos|oraclelinux|...|ubi|...` (RPM-based distro)
 
 ```dockerfile
-ENV GOSU_VERSION 1.18
+ENV GOSU_VERSION 1.19
 RUN set -eux; \
 	\
 	rpmArch="$(rpm --query --queryformat='%{ARCH}' rpm)"; \
@@ -92,7 +92,7 @@ RUN set -eux; \
 		armv[67]*) dpkgArch='armhf' ;; \
 		i[3456]86) dpkgArch='i386' ;; \
 		ppc64le) dpkgArch='ppc64el' ;; \
-		riscv64 | s390x) dpkgArch="$rpmArch" ;; \
+		riscv64 | s390x | loongarch64) dpkgArch="$rpmArch" ;; \
 		x86_64) dpkgArch='amd64' ;; \
 		*) echo >&2 "error: unknown/unsupported architecture '$rpmArch'"; exit 1 ;; \
 	esac; \
