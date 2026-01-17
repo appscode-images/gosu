@@ -1,0 +1,65 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - "*.*"
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v1
+
+      - name: Set up QEMU
+        id: qemu
+        uses: docker/setup-qemu-action@v3
+        with:
+          cache-image: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build
+        env:
+          GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
+        run: |
+          ./build.sh
+          echo "$GPG_SECRET_KEY" | gpg --import
+          ./sign.sh
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            gosu-amd64
+            gosu-amd64.asc
+            gosu-arm64
+            gosu-arm64.asc
+            gosu-armel
+            gosu-armel.asc
+            gosu-armhf
+            gosu-armhf.asc
+            gosu-i386
+            gosu-i386.asc
+            gosu-mips64el
+            gosu-mips64el.asc
+            gosu-ppc64el
+            gosu-ppc64el.asc
+            gosu-riscv64
+            gosu-riscv64.asc
+            gosu-s390x
+            gosu-s390x.asc
+            SHA256SUMS
+            SHA256SUMS.asc
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
